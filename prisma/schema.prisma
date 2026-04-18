@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model ZodiacSign {
+  id             String         @id @default(cuid())
+  zodiacId       String         @unique // e.g., 'rat', 'ox', 'tiger'
+  branchCode     String         // e.g., 'ja', 'chuk', 'in'
+  animalNameKo   String         // e.g., '쥐', '소', '범'
+  displayNameKo  String         // e.g., '쥐띠', '소띠', '범띠'
+  orderNo        Int            // 1~12
+  emoji          String?
+  isActive       Boolean        @default(true)
+  fortunes       DailyFortune[]
+}
+
+model CalendarDate {
+  solarDate       String         @id // e.g., '2026-04-18' (PK)
+  solarYear       Int
+  solarMonth      Int
+  solarDay        Int
+  weekday         String         // 'monday', 'tuesday'
+  lunarMonth      Int?
+  lunarDay        Int?
+  lunarDateStr    String?        // e.g., '2026-03-01' (음력 ISO)
+  ganjiDay        String?        // e.g., '갑자' (일진)
+  ganjiYear       String?        // e.g., '병오' (세차)
+  isPublicHoliday Boolean        @default(false)
+  holidayName     String?        // e.g., '설날', '어린이날'
+  solarTerm       String?        // e.g., '입춘'
+  fortunes        DailyFortune[]
+}
+
+model DailyFortune {
+  id             String         @id @default(cuid())
+  serviceDate    String
+  zodiacId       String
+  overallScore   Int            @default(80)
+  overallText    String
+  moneyText      String?
+  loveText       String?
+  careerText     String?        // 직장/재물운 (PDF 4.2절 daily_fortune_sections)
+  luckyColor     String?
+  luckyNumber    Int?
+  luckyDirection String?        // 행운 방향 (PDF 3.2절)
+  status         String         @default("published")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  date           CalendarDate   @relation(fields: [serviceDate], references: [solarDate])
+  zodiac         ZodiacSign     @relation(fields: [zodiacId], references: [zodiacId])
+  generationLogs GenerationLog[]
+
+  @@unique([serviceDate, zodiacId])
+}
+
+// LLM 호출 로그 (PDF 4.3절 generation_logs)
+model GenerationLog {
+  id              String       @id @default(cuid())
+  serviceDate     String
+  zodiacId        String
+  promptPayload   String       // JSON string of system+user prompt
+  llmRawResponse  String?      // raw LLM response text
+  modelUsed       String?      // e.g., 'claude-haiku-4-5-20251001'
+  createdAt       DateTime     @default(now())
+
+  fortune         DailyFortune? @relation(fields: [serviceDate, zodiacId], references: [serviceDate, zodiacId])
+}
+
+// 맥락별 프롬프트 템플릿 (PDF 4.2절 fortune_templates)
+model FortuneTemplate {
+  id              String   @id @default(cuid())
+  contextTrigger  String   // e.g., '입춘', '설날', '월요일', 'score_high'
+  toneGuideline   String   // 분위기 가이드
+  systemPrompt    String?  // 해당 맥락에서 덮어쓸 시스템 프롬프트 (선택)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+}
