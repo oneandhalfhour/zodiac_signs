@@ -75,10 +75,17 @@ export default function Home() {
       .catch(() => setAvailableDates(new Set()));
   }, []);
 
+  // 선택된 날짜 칩이 화면 중앙에 오도록 스크롤
+  useEffect(() => {
+    const activeChip = document.querySelector('.date-chip.active');
+    if (activeChip) {
+      activeChip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }, [selectedDate]);
+
   const fetchFortune = async (zodiacId: ZodiacId, dateStr: string) => {
     setLoading(true);
     setError(null);
-    setFortune(null);
 
     try {
       const res = await fetch(`${BASE_PATH}/data/fortunes/${dateStr}.json`);
@@ -92,6 +99,7 @@ export default function Home() {
       setFortune(zodiacData);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : '오류가 발생했습니다.');
+      setFortune(null);
     } finally {
       setLoading(false);
     }
@@ -115,8 +123,13 @@ export default function Home() {
 
   const handleDateSelect = (dateStr: string) => {
     setSelectedDate(dateStr);
-    setFortune(null);
     setError(null);
+    if (fortune) {
+      // 이미 운세를 보고 있다면, 띠를 유지한 채로 새 날짜 데이터를 불러옵니다.
+      fetchFortune(fortune.zodiacId as ZodiacId, dateStr);
+    } else {
+      setFortune(null);
+    }
   };
 
   const resetView = () => {
