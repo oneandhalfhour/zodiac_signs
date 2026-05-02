@@ -210,3 +210,58 @@ input[type="date"]:focus, input[type="text"]:focus {
   font-size: 0.9rem;
   color: #93c5fd;
 }
+
+/* Date Picker */
+.date-picker {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding: 0.25rem 0 0.5rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.date-picker::-webkit-scrollbar {
+  display: none;
+}
+
+.date-chip {
+  flex-shrink: 0;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background: rgba(30, 41, 59, 0.5);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.date-chip:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--text-main);
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.date-chip.active {
+  border-color: var(--accent);
+  background: rgba(59, 130, 246, 0.25);
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.date-chip.today {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.date-chip.today.active {
+  background: rgba(251, 191, 36, 0.2);
+}
+
+.date-chip:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

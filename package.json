@@ -8,9 +8,13 @@
     "start": "next start",
     "lint": "eslint",
     "seed:calendar": "npx tsx scripts/seed-calendar.ts",
-    "batch": "npx tsx scripts/batch-generate.ts"
+    "batch": "npx tsx scripts/batch-generate.ts",
+    "export-json": "npx tsx scripts/export-json.ts",
+    "generate": "npm run batch && npm run export-json"
   },
   "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.126",
+    "@anthropic-ai/claude-code": "^2.1.126",
     "@anthropic-ai/sdk": "^0.90.0",
     "@prisma/client": "^6.19.3",
     "korean-lunar-calendar": "^0.3.6",

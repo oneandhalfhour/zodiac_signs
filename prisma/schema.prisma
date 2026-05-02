@@ -48,6 +48,7 @@ model DailyFortune {
   moneyText      String?
   loveText       String?
   careerText     String?        // 직장/재물운 (PDF 4.2절 daily_fortune_sections)
+  healthText     String?        // 건강운
   luckyColor     String?
   luckyNumber    Int?
   luckyDirection String?        // 행운 방향 (PDF 3.2절)
@@ -57,8 +58,6 @@ model DailyFortune {
 
   date           CalendarDate   @relation(fields: [serviceDate], references: [solarDate])
   zodiac         ZodiacSign     @relation(fields: [zodiacId], references: [zodiacId])
-  generationLogs GenerationLog[]
-
   @@unique([serviceDate, zodiacId])
 }
 
@@ -71,8 +70,6 @@ model GenerationLog {
   llmRawResponse  String?      // raw LLM response text
   modelUsed       String?      // e.g., 'claude-haiku-4-5-20251001'
   createdAt       DateTime     @default(now())
-
-  fortune         DailyFortune? @relation(fields: [serviceDate, zodiacId], references: [serviceDate, zodiacId])
 }
 
 // 맥락별 프롬프트 템플릿 (PDF 4.2절 fortune_templates)

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm list *)",
+      "WebSearch",
+      "Bash(npm view *)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:docs.claude.com)",
+      "Bash(npm show *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('description:', d.get\\('description',''\\)\\); print\\('main:', d.get\\('main',''\\)\\); print\\('exports keys:', list\\(\\(d.get\\('exports'\\) or {}\\).keys\\(\\)\\)[:10]\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:d[k] for k in ['main','exports','bin'] if k in d}, indent=2\\)\\)\")",
+      "Bash(sed -n '3115,3145p' /Users/ken/Projects/Ken/zodiac_signs/node_modules/@anthropic-ai/claude-agent-sdk/sdk.d.ts)",
+      "Bash(sed -n '2334,2345p' /Users/ken/Projects/Ken/zodiac_signs/node_modules/@anthropic-ai/claude-agent-sdk/sdk.d.ts)"
+    ]
+  }
+}

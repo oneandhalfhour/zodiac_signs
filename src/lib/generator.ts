@@ -7,7 +7,7 @@
  * 4단계: LLM 추론 및 JSON 구조화 파싱
  */
 
-import Anthropic from '@anthropic-ai/sdk';
+import { query } from '@anthropic-ai/claude-agent-sdk';
 import { PrismaClient } from '@prisma/client';
 import { getCalendarInfo, getSolarTerm } from './lunar-calendar';
 import { analyzeRelation } from './zodiac-relations';
@@ -35,21 +35,33 @@ interface GeneratedFortune {
   health: string;
 }
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const LLM_MODEL = 'claude-haiku-4-5-20251001';
 
 /**
- * 4단계: Claude API 호출 및 JSON 파싱 (PDF 5.4절 "LLM 추론 및 JSON 구조화 파싱")
+ * 4단계: Claude 구독 계정으로 호출 및 JSON 파싱 (PDF 5.4절 "LLM 추론 및 JSON 구조화 파싱")
+ * ANTHROPIC_API_KEY 없이 `claude` CLI 로그인 세션을 사용합니다.
  */
 async function callLLM(systemPrompt: string, userPrompt: string): Promise<GeneratedFortune> {
-  const response = await anthropic.messages.create({
-    model: LLM_MODEL,
-    max_tokens: 1024,
-    system: systemPrompt,
-    messages: [{ role: 'user', content: userPrompt }],
-  });
+  let text = '';
 
-  const text = response.content[0].type === 'text' ? response.content[0].text : '';
+  for await (const message of query({
+    prompt: userPrompt,
+    options: {
+      systemPrompt,
+      allowedTools: [],
+      model: LLM_MODEL,
+    },
+  })) {
+    if (message.type === 'assistant') {
+      for (const block of message.message.content) {
+        if (block.type === 'text') {
+          text = block.text;
+        }
+      }
+    }
+  }
+
+  if (!text) throw new Error('LLM이 텍스트를 반환하지 않았습니다');
 
   // JSON 블록 추출 (```json ... ``` 또는 순수 JSON)
   const jsonMatch = text.match(/```json\s*([\s\S]*?)```/) || text.match(/(\{[\s\S]*\})/);
