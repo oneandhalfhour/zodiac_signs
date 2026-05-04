@@ -12,6 +12,9 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:d[k] for k in ['main','exports','bin'] if k in d}, indent=2\\)\\)\")",
       "Bash(sed -n '3115,3145p' /Users/ken/Projects/Ken/zodiac_signs/node_modules/@anthropic-ai/claude-agent-sdk/sdk.d.ts)",
       "Bash(sed -n '2334,2345p' /Users/ken/Projects/Ken/zodiac_signs/node_modules/@anthropic-ai/claude-agent-sdk/sdk.d.ts)"
+    ],
+    "additionalDirectories": [
+      "/Users/ken/Projects/Ken/zodiac_signs"
     ]
   }
 }

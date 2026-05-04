@@ -10,6 +10,7 @@
     "seed:calendar": "npx tsx scripts/seed-calendar.ts",
     "batch": "npx tsx scripts/batch-generate.ts",
     "export-json": "npx tsx scripts/export-json.ts",
+    "sync": "npx tsx scripts/sync-fortunes.ts",
     "generate": "npm run batch && npm run export-json"
   },
   "dependencies": {
